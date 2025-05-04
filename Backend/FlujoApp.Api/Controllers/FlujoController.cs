@@ -15,10 +15,10 @@ public class FlujoController : ControllerBase
 
     // POST: api/flujo
     [HttpPost]
-    public async Task<IActionResult> CrearFlujo([FromBody] FlujoDto flujoDto)
+    public async Task<IActionResult> Crear([FromBody] FlujoDto flujoDto)
     {
         var id = await _flujoService.CrearFlujoAsync(flujoDto);
-        return CreatedAtAction(nameof(ObtenerFlujo), new { id }, new { id });
+        return Ok(id);
     }
 
     // GET: api/flujo/{id}

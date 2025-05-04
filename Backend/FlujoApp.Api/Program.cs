@@ -4,8 +4,9 @@ using FlujoApp.Api.Infraestructure;
 using FlujoApp.Api.Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using FlujoApp.Api.Core.Interfaces;
 using FlujoApp.Api.Core.Services.Ejecutores;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IFlujoService, FlujoService>();
 builder.Services.AddScoped<IFlujoRepository, FlujoRepository>();
 
-
+//builder.Services.AddScoped<RegistroUsuarioExecutor>();
+//builder.Services.AddScoped<EnviarCorreoExecutor>();
 builder.Services.AddScoped<IPasoExecutor, RegistroUsuarioExecutor>();
 builder.Services.AddScoped<IPasoExecutor, EnviarCorreoExecutor>();
+builder.Services.AddScoped<IPasoExecutorFactory, PasoExecutorFactory>();
+//builder.Services.AddScoped<IFlujoService, FlujoService>();
+//builder.Services.AddScoped<IFlujoRepository, FlujoRepository>();
+
+
+//builder.Services.AddScoped<IPasoExecutor, RegistroUsuarioExecutor>();
+//builder.Services.AddScoped<IPasoExecutor, EnviarCorreoExecutor>();
 
 // Fábrica de ejecutores (nuevo interface)
 //builder.Services.AddScoped<IPasoExecutorFactory, PasoExecutorFactory>();

@@ -7,7 +7,7 @@
         public string Tipo { get; set; }
         public int Orden { get; set; }
 
-        public List<Guid> Dependencias { get; set; } = new();
+        public List<string> Dependencias { get; set; } = new();
         public List<CampoDto> Campos { get; set; } = new();
     }
 }

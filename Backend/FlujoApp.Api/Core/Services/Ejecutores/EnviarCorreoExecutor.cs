@@ -5,11 +5,24 @@ namespace FlujoApp.Api.Core.Services.Ejecutores
 {
     public class EnviarCorreoExecutor : IPasoExecutor
     {
-        public async Task EjecutarAsync(Paso paso, Dictionary<string, object> datosEntrada)
+        public bool CanHandle(string tipo)
         {
-            var email = datosEntrada["email"]?.ToString();
-            Console.WriteLine($"📧 Correo enviado a: {email}");
-            await Task.Delay(100); // Simula envío
+            return tipo.Equals("EnviarCorreo", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public Task EjecutarAsync(Paso paso, Dictionary<string, object> datosEntrada)
+        {
+            if (!datosEntrada.TryGetValue("email", out var emailObj))
+            {
+                throw new ArgumentException("Falta el campo 'email' en los datos de entrada");
+            }
+
+            var email = emailObj.ToString();
+            Console.WriteLine($"[EnviarCorreoExecutor] Enviando correo a: {email}");
+
+            // Aquí podrías simular lógica real de envío de correo (SMTP, SendGrid, etc.)
+
+            return Task.CompletedTask;
         }
     }
 }

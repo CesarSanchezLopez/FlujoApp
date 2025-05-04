@@ -1,25 +1,25 @@
-﻿using FlujoApp.Api.Core.Interfaces;
+﻿using FlujoApp.Api.Core.Entities;
+using FlujoApp.Api.Core.Interfaces;
 using FlujoApp.Api.Core.Services.Ejecutores;
 
 namespace FlujoApp.Api.Core.Services
 {
-    public class PasoExecutorFactory 
+    public class PasoExecutorFactory : IPasoExecutorFactory
     {
-        private readonly IServiceProvider _provider;
+        private readonly IEnumerable<IPasoExecutor> _executors;
 
-        public PasoExecutorFactory(IServiceProvider provider)
+        public PasoExecutorFactory(IEnumerable<IPasoExecutor> executors)
         {
-            _provider = provider;
+            _executors = executors;
         }
 
-        public IPasoExecutor ObtenerExecutor(string tipo)
+        public async Task EjecutarPasoAsync(Paso paso, Dictionary<string, object> datosEntrada)
         {
-            return tipo switch
-            {
-                "RegistroUsuario" => _provider.GetRequiredService<RegistroUsuarioExecutor>(),
-                "EnviarCorreo" => _provider.GetRequiredService<EnviarCorreoExecutor>(),
-                _ => throw new NotImplementedException($"Tipo de paso no soportado: {tipo}")
-            };
+            var executor = _executors.FirstOrDefault(e => e.CanHandle(paso.Tipo));
+            if (executor == null)
+                throw new InvalidOperationException($"No hay ejecutor para el tipo: {paso.Tipo}");
+
+            await executor.EjecutarAsync(paso, datosEntrada);
         }
     }
 }
