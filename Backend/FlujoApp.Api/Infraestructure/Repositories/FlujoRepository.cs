@@ -16,14 +16,15 @@ namespace FlujoApp.Api.Infraestructure.Repositories
             _context = context;
         }
 
-        public async Task<Flujo> ObtenerPorIdAsync(Guid id)
+        public async Task<Flujo> ObtenerPorIdAsync(Guid flujoId)
         {
             return await _context.Flujos
                 .Include(f => f.Pasos)
                     .ThenInclude(p => p.Campos)
+                        .ThenInclude(c => c.CampoCatalogo)
                 .Include(f => f.Pasos)
                     .ThenInclude(p => p.Dependencias)
-                .FirstOrDefaultAsync(f => f.Id == id);
+                .FirstOrDefaultAsync(f => f.Id == flujoId);
         }
 
         public async Task AgregarAsync(Flujo flujo)

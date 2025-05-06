@@ -28,12 +28,41 @@ namespace FlujoApp.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Nombre")
+                    b.Property<Guid>("CampoCatalogoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CampoCodigo")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("EsEntrada")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("PasoId")
                         .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampoCatalogoId");
+
+                    b.HasIndex("PasoId");
+
+                    b.ToTable("Campos");
+                });
+
+            modelBuilder.Entity("FlujoApp.Api.Core.Entities.CampoCatalogo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("Requerido")
                         .HasColumnType("boolean");
@@ -44,9 +73,32 @@ namespace FlujoApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PasoId");
+                    b.ToTable("CampoCatalogos");
+                });
 
-                    b.ToTable("Campos", (string)null);
+            modelBuilder.Entity("FlujoApp.Api.Core.Entities.DatoUsuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CampoCodigo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FlujoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PasoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Valor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DatoUsuarios");
                 });
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.Flujo", b =>
@@ -65,7 +117,7 @@ namespace FlujoApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Flujos", (string)null);
+                    b.ToTable("Flujos");
                 });
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.Paso", b =>
@@ -96,7 +148,7 @@ namespace FlujoApp.Api.Migrations
 
                     b.HasIndex("FlujoId");
 
-                    b.ToTable("Pasos", (string)null);
+                    b.ToTable("Pasos");
                 });
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.PasoDependencia", b =>
@@ -113,20 +165,26 @@ namespace FlujoApp.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DependeDePasoId");
-
                     b.HasIndex("PasoId");
 
-                    b.ToTable("PasoDependencias", (string)null);
+                    b.ToTable("PasoDependencias");
                 });
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.Campo", b =>
                 {
+                    b.HasOne("FlujoApp.Api.Core.Entities.CampoCatalogo", "CampoCatalogo")
+                        .WithMany("UsosEnPasos")
+                        .HasForeignKey("CampoCatalogoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FlujoApp.Api.Core.Entities.Paso", "Paso")
                         .WithMany("Campos")
                         .HasForeignKey("PasoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CampoCatalogo");
 
                     b.Navigation("Paso");
                 });
@@ -144,12 +202,6 @@ namespace FlujoApp.Api.Migrations
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.PasoDependencia", b =>
                 {
-                    b.HasOne("FlujoApp.Api.Core.Entities.Paso", null)
-                        .WithMany()
-                        .HasForeignKey("DependeDePasoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FlujoApp.Api.Core.Entities.Paso", "Paso")
                         .WithMany("Dependencias")
                         .HasForeignKey("PasoId")
@@ -157,6 +209,11 @@ namespace FlujoApp.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Paso");
+                });
+
+            modelBuilder.Entity("FlujoApp.Api.Core.Entities.CampoCatalogo", b =>
+                {
+                    b.Navigation("UsosEnPasos");
                 });
 
             modelBuilder.Entity("FlujoApp.Api.Core.Entities.Flujo", b =>

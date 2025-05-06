@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "d63e8c31-51f2-4f1e-a977-70921f13b3fb",
+		"name": "flujo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26698763"
+	},
+	"item": [
+		{
+			"name": "Crear Flujo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7159/api/Flujo",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7159",
+					"path": [
+						"api",
+						"Flujo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ejecutar Flujo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"usuario@ejemplo.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7159/api/Flujo/b2daa6e5-2608-4880-b816-c1bafaf41cfc/ejecutar",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7159",
+					"path": [
+						"api",
+						"Flujo",
+						"b2daa6e5-2608-4880-b816-c1bafaf41cfc",
+						"ejecutar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Prueba crear flujo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Flujo A-B y A-C 2\",\r\n  \"descripcion\": \"Un flujo simple con ejecución paralela prueba 2\",\r\n  \"pasos\": [\r\n    {\r\n      \"codigo\": \"P1\",\r\n      \"nombre\": \"Registro de Usuario\",\r\n      \"tipo\": \"RegistroUsuario\",\r\n      \"orden\": 1,\r\n      \"campos\": [\r\n        { \"nombre\": \"email\", \"tipo\": \"string\", \"requerido\": true }\r\n      ],\r\n      \"dependencias\": []\r\n    },\r\n    {\r\n      \"codigo\": \"P2\",\r\n      \"nombre\": \"Enviar Correo Bienvenida\",\r\n      \"tipo\": \"EnviarCorreo\",\r\n      \"orden\": 2,\r\n      \"campos\": [\r\n        { \"nombre\": \"email\", \"tipo\": \"string\", \"requerido\": true }\r\n      ],\r\n      \"dependencias\": [\"P1\"]\r\n    },\r\n    {\r\n      \"codigo\": \"P3\",\r\n      \"nombre\": \"Enviar Correo Confirmación\",\r\n      \"tipo\": \"EnviarCorreo\",\r\n      \"orden\": 2,\r\n      \"campos\": [\r\n        { \"nombre\": \"email\", \"tipo\": \"string\", \"requerido\": true }\r\n      ],\r\n      \"dependencias\": [\"P1\"]\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7159/api/Flujo",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7159",
+					"path": [
+						"api",
+						"Flujo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFlujo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:7159/api/Flujo/35e5c8b3-a7a1-4ea5-80d0-3fb31130da02",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7159",
+					"path": [
+						"api",
+						"Flujo",
+						"35e5c8b3-a7a1-4ea5-80d0-3fb31130da02"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -10,19 +10,25 @@ namespace FlujoApp.Api.Core.Services.Ejecutores
             return tipo.Equals("RegistroUsuario", StringComparison.OrdinalIgnoreCase);
         }
 
-        public Task EjecutarAsync(Paso paso, Dictionary<string, object> datosEntrada)
+        public async Task<Dictionary<string, object>> EjecutarAsync(Paso paso, Dictionary<string, object> datosEntrada)
         {
-            if (!datosEntrada.TryGetValue("email", out var emailObj))
+            Console.WriteLine("[RegistroUsuarioExecutor] Registrando usuario:");
+
+            foreach (var kvp in datosEntrada)
             {
-                throw new ArgumentException("Falta el campo 'email' en los datos de entrada");
+                Console.WriteLine($"  {kvp.Key}: {kvp.Value}");
             }
 
-            var email = emailObj.ToString();
-            Console.WriteLine($"[RegistroUsuarioExecutor] Registrando usuario con email: {email}");
+            // Simular lógica de negocio (por ejemplo, guardar en base de datos)
+            await Task.Delay(500);
 
-            // Aquí podrías simular guardar en base de datos, enviar email de bienvenida, etc.
+            // Generar resultado dinámicamente con los datos de entrada
+            var resultado = datosEntrada.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            return Task.CompletedTask;
+            // Agregar mensaje adicional
+            resultado["mensaje"] = "Paso Usuario Registrado correctamente";
+
+            return resultado;
         }
     }
 }
