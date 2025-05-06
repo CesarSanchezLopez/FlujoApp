@@ -15,7 +15,7 @@ namespace FlujoApp.Api.Core.Services
         public FlujoService(
             IFlujoRepository repositorio,
             IPasoExecutorFactory factory,
-            IDatoUsuarioRepository datoUsuarioRepo, 
+            IDatoUsuarioRepository datoUsuarioRepo,
             ICampoCatalogoRepository catalogoRepo)
         {
             _repositorio = repositorio;
@@ -24,7 +24,7 @@ namespace FlujoApp.Api.Core.Services
             _catalogoRepo = catalogoRepo;
         }
 
-        public async Task<Dictionary<string, object>> EjecutarFlujoAsync(Guid flujoId, Dictionary<string, object> inputData)
+        public async Task<(Dictionary<string, object> resultadoFinal, List<string> mensajes)> EjecutarFlujoAsync(Guid flujoId, Dictionary<string, object> inputData)
         {
             var flujo = await _repositorio.ObtenerPorIdAsync(flujoId);
             if (flujo == null)
@@ -32,32 +32,28 @@ namespace FlujoApp.Api.Core.Services
 
             var pasosOrdenados = FlujoExecutionHelper.OrdenarPasos(flujo.Pasos.ToList());
 
-            // Cargar datos previamente guardados del usuario para este flujo
             var datosGuardados = await _datoUsuarioRepo.ObtenerPorFlujoIdAsync(flujoId);
             var datosDisponibles = new Dictionary<string, object>(inputData);
+            var mensajes = new List<string>();
 
             foreach (var dato in datosGuardados)
             {
                 if (!datosDisponibles.ContainsKey(dato.CampoCodigo))
-                {
                     datosDisponibles[dato.CampoCodigo] = dato.Valor;
-                }
             }
 
             foreach (var nivel in pasosOrdenados)
             {
                 var tareas = nivel.Select(async paso =>
                 {
-                    // 🔽 Asegurar que CampoCatalogo esté cargado
                     foreach (var campo in paso.Campos)
                     {
                         if (campo.CampoCatalogo == null)
                             throw new Exception($"Campo '{campo.CampoCodigo}' no tiene CampoCatalogo cargado.");
                     }
 
-                  
                     var camposEntrada = paso.Campos
-                        .Where(c => !string.IsNullOrEmpty(c.CampoCodigo)) // ignora CampoCatalogo
+                        .Where(c => !string.IsNullOrEmpty(c.CampoCodigo))
                         .Select(c => c.CampoCodigo)
                         .ToList();
 
@@ -85,11 +81,15 @@ namespace FlujoApp.Api.Core.Services
                             Valor = valor?.ToString() ?? ""
                         });
                     }
+
+                    if (resultado.TryGetValue("mensaje", out var mensaje))
+                        mensajes.Add($"{paso.Nombre}: {mensaje}");
                 });
 
                 await Task.WhenAll(tareas);
             }
-            return datosDisponibles;
+
+            return (datosDisponibles, mensajes);
         }
 
         public async Task<Guid> CrearFlujoAsync(FlujoDto dto)
@@ -199,5 +199,5 @@ namespace FlujoApp.Api.Core.Services
             };
         }
     }
- }
+}
 

@@ -126,3 +126,12 @@ Pasos :
   "F-0006": "12345678",
   "F-0007": "juan.perez@example.com"
 }
+
+
+### 🗄️ Consideraciones
+
+Se implementa el patron Factory el cual define la creacion del paso segun el tipo parametro de entrada al json 
+al crear el flujo.
+
+"tipo": "RegistroUsuario",
+"tipo": "EnviarCorreo",

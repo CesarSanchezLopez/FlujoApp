@@ -38,11 +38,13 @@ public class FlujoController : ControllerBase
     {
         try
         {
-            var resultado = await _flujoService.EjecutarFlujoAsync(id, inputData);
+            var (resultadoFinal, mensajes) = await _flujoService.EjecutarFlujoAsync(id, inputData);
+
             return Ok(new
             {
                 mensaje = "Flujo ejecutado correctamente",
-                resultado
+                resultado = resultadoFinal,
+                logs = mensajes.Select((msg, i) => new { paso = i + 1, mensaje = msg })
             });
         }
         catch (Exception ex)
